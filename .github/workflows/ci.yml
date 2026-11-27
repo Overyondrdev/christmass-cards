@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 14 * * 1" # Mondays: catch drift in the shared sign-in file even when nothing here changes
+
+# Least-privilege token for every job.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Pin third-party actions to a commit SHA if this repo ever handles secrets (Dependabot keeps them current).
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run check   # syntax of every Worker, page and script file
+      - run: npm test        # address rules, spreadsheet parsing, sign-in token checks
+      # Builds the real Worker bundle (public/ files included) without deploying it.
+      - run: npx wrangler deploy --dry-run --outdir dist
+
+  # src/yondr-session.js must stay identical to the Yondr sign-in service's copy
+  # (overyondr-website-v1/auth/src/session.js), which every *.overyondrdev.com site shares.
+  shared-session:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - run: |
+          curl -fsSL https://raw.githubusercontent.com/Overyondrdev/overyondr-website-v1/main/auth/src/session.js -o upstream.js
+          cmp upstream.js src/yondr-session.js || {
+            echo "::error file=src/yondr-session.js::Differs from overyondr-website-v1/auth/src/session.js. Copy that file here unchanged."
+            exit 1
+          }
+
+# Deploys are handled by Cloudflare Workers Builds (Git integration: every push to main), not by Actions,
+# so no Cloudflare secrets are stored in GitHub.

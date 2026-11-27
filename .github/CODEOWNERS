@@ -1,0 +1,7 @@
+# Day-to-day changes (pages, styles, copy, address rules) need no code-owner review: merge once CI passes.
+# Deploy config, CI and sign-in code need a web admin's review.
+/wrangler.jsonc          @Yondr-Chad
+/.github/                @Yondr-Chad
+/src/auth.js             @Yondr-Chad
+/src/signin.js           @Yondr-Chad
+/src/yondr-session.js    @Yondr-Chad
