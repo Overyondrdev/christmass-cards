@@ -105,7 +105,6 @@ function exportHref() {
 }
 function clients(v) {
   const f = state.filters;
-  const people = [...new Set(state.items.map((c) => c.added_by))].sort();
   const countries = [...new Set(state.items.map((c) => c.country))].sort();
   const depts = [...new Set(state.items.map((c) => c.department || 'Not set'))].sort();
   const uploads = state.ov.uploads || [];
@@ -113,7 +112,7 @@ function clients(v) {
     <div class="filters">
       <label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         <span class="sr">Search</span><input type="search" placeholder="Search everything" value="${esc(f.q)}" data-f="q" /></label>
-      <select data-f="added_by" aria-label="Added by"><option value="">Everyone</option>${people.map((p) => `<option ${p === f.added_by ? 'selected' : ''}>${esc(p)}</option>`).join('')}</select>
+      <label class="added-by"><span class="sr">Added by</span><input type="email" data-people data-f="added_by" placeholder="Added by anyone" value="${esc(f.added_by)}" autocomplete="off" /></label>
       <select data-f="status" aria-label="Address status"><option value="">Any status</option>${Object.entries(STATUS).map(([k, s]) => `<option value="${k}" ${k === f.status ? 'selected' : ''}>${esc(s.label)}</option>`).join('')}</select>
       <select data-f="department" aria-label="Department"><option value="">All departments</option>${depts.map((x) => `<option ${x === f.department ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select>
       <select data-f="country" aria-label="Country"><option value="">All countries</option>${countries.map((c) => `<option value="${c}" ${c === f.country ? 'selected' : ''}>${esc(countryName(c))}</option>`).join('')}</select>
@@ -122,11 +121,21 @@ function clients(v) {
       <a class="btn btn-sm" href="${esc(exportHref())}" download data-export-filtered>Export these</a>
     </div>
     <div data-table></div>`;
-  $$('[data-f]', v).forEach((el) => el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', () => {
-    state.filters[el.dataset.f] = el.value;
+  const apply = (key, value) => {
+    state.filters[key] = value;
     $('[data-export-filtered]', v).href = exportHref();
     table();
-  }));
+  };
+  $$('[data-f]', v).forEach((el) => {
+    // "Added by" uses the shared Yondr people picker: filter once a person is picked (or a full email is typed and
+    // the field loses focus), not on every keystroke; clearing the field shows everyone again.
+    if (el.dataset.f === 'added_by') {
+      el.addEventListener('change', () => apply('added_by', el.value.trim().toLowerCase()));
+      el.addEventListener('input', () => { if (!el.value.trim() && state.filters.added_by) apply('added_by', ''); });
+      return;
+    }
+    el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', () => apply(el.dataset.f, el.value));
+  });
   table();
 }
 function table() {
@@ -218,7 +227,7 @@ async function access(v) {
     <p class="sub" style="margin:-6px 0 14px">Everyone with an @overyondr.com email can add clients. Admins can also see everyone’s clients, edit them and export the list.</p>
     <div class="people">${list.map((a) => `<div class="person"><div><b>${esc(a.email)}</b><div class="muted" style="font-size:13px;color:var(--moss)">${a.added_by ? 'Added by ' + esc(a.added_by) : 'Set up with the app'}</div></div>
       <div style="display:flex;gap:8px;align-items:center"><span class="role">${esc(a.role)}</span>${a.role !== 'owner' && a.email !== state.me.email ? `<button class="icon-btn" type="button" data-rm-admin="${esc(a.email)}" aria-label="Remove ${esc(a.email)}">${ICONS.trash}</button>` : ''}</div></div>`).join('')}</div>
-    <form class="inline-form" data-add-admin><label class="sr" for="new-admin">Email</label><input id="new-admin" type="email" placeholder="name@overyondr.com" required /><button class="btn btn-primary" type="submit">Add admin</button></form></div>`;
+    <form class="inline-form" data-add-admin><label class="sr" for="new-admin">Colleague to make an admin</label><input id="new-admin" type="email" data-people placeholder="Start typing a name" autocomplete="off" required /><button class="btn btn-primary" type="submit">Add admin</button></form></div>`;
   $('[data-add-admin]', v).addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = $('#new-admin', v).value.trim();
