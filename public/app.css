@@ -30,11 +30,20 @@ img, svg { display: block; }
 .skip:focus { top: 12px; }
 
 /* ------------------------------------------------------------ top bar */
+/* Sticky on every page: stays visible while scrolling. z-index sits above page content but below the
+   .skip link (100), toasts (1000) and <dialog> modals (top layer). --top-h keeps anchors and focused fields clear. */
+:root { --top-h: 61px; }
+html { scroll-padding-top: calc(var(--top-h) + 8px); }
 .top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 14px clamp(16px, 4vw, 48px); background: var(--forest); color: var(--ow); border-bottom: 1px solid rgb(244 249 209 / .08); }
-.brand { display: flex; align-items: center; gap: 12px; color: inherit; text-decoration: none; }
-.brand span { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgb(244 249 209 / .72);
-  padding-left: 12px; border-left: 1px solid rgb(244 249 209 / .25); white-space: nowrap; }
+  min-height: var(--top-h); padding: 10px clamp(16px, 4vw, 48px); background: var(--forest); color: var(--ow);
+  border-bottom: 1px solid rgb(244 249 209 / .12); box-shadow: 0 6px 16px -10px rgb(0 0 0 / .45); }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; color: inherit; }
+.brand a { color: inherit; text-decoration: none; border-radius: 6px; }
+.brand-logo { flex: none; padding: 4px 0; }
+.brand-logo:focus-visible, .brand-name:focus-visible { outline-color: var(--lichen); }
+.brand-name { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgb(244 249 209 / .72);
+  padding-left: 12px; border-left: 1px solid rgb(244 249 209 / .25); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+a.brand-name:hover { color: var(--ow); }
 .top-right { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .who { font-size: 13px; color: rgb(244 249 209 / .75); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 34vw; }
 .pill-link { font-size: 13px; font-weight: 700; color: var(--forest); background: var(--lichen); padding: 6px 12px; border-radius: 999px; text-decoration: none; }
@@ -339,7 +348,7 @@ td.addr { min-width: 220px; }
 html:has(.signin-body) { overflow-x: hidden; }
 .signin-body { min-height: 100vh; position: relative; overflow-x: hidden; background: radial-gradient(1200px 600px at 80% -10%, #2f4c14 0%, transparent 60%), var(--forest); color: var(--ow); }
 .signin-body > .snow { position: fixed; }
-.top-clear { position: relative; background: transparent; border: 0; }
+.top-clear { position: relative; background: transparent; border: 0; box-shadow: none; }
 .signin { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: clamp(24px, 6vh, 72px) clamp(16px, 4vw, 48px) 64px;
   display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 440px); gap: clamp(28px, 6vw, 80px); align-items: center; min-height: calc(100vh - 64px); }
 .signin-intro { position: relative; }
@@ -472,7 +481,11 @@ html:has(.signin-body) { overflow-x: hidden; }
   .bar { grid-template-columns: minmax(0, 1fr) 80px 36px; }
 }
 @media (max-width: 420px) {
-  .brand span { display: none; }
+  :root { --top-h: 56px; }
+  .top { gap: 8px; }
+  .brand { gap: 10px; }
+  .brand-name { font-size: 11px; letter-spacing: .1em; padding-left: 10px; }
+  .brand-long { display: none; }
   .hero-actions .btn { flex: 1 1 100%; }
   .kpis { grid-template-columns: 1fr 1fr; gap: 10px; }
   .kpi { padding: 14px; }
