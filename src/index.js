@@ -37,7 +37,7 @@ const SECURITY = {
   'X-Frame-Options': 'DENY',
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'same-origin',
-  'Content-Security-Policy': "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
+  'Content-Security-Policy': "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://auth.overyondrdev.com; connect-src 'self' https://auth.overyondrdev.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
 };
 
 function withHeaders(res) {

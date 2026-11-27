@@ -54,7 +54,9 @@ Never commit `.dev.vars`, `.env*` or keys. Database changes must be additive (se
 - **Your clients** — everyone sees and edits only what they added.
 - **Admin** (`/admin`) — totals, who added what, every client with filters, uploads, CSV export for the mail
   house, mark flagged addresses as checked, admins, and settings (deadline, intro message, department list,
-  close the list). Department is a column, a filter and an overview chart.
+  close the list). Department is a column, a filter and an overview chart. The "Added by" filter and "Add admin"
+  use the shared Yondr people picker (type a name; it suggests colleagues from the Yondr directory via
+  auth.overyondrdev.com, so the CSP allows that host for scripts and fetches).
 
 ## Address checking (`src/address.js`)
 1. Built-in rules always run: required fields, postal-code formats (US, CA, UK, MX and ~25 more), US state/ZIP

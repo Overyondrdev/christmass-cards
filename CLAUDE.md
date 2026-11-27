@@ -14,6 +14,8 @@ Never force-push `main`. Never commit `.dev.vars`, `.env*`, keys or client data.
 ## Rules
 - `src/yondr-session.js` is a copy of overyondr-website-v1 `auth/src/session.js`. Never edit it here; copy the
   upstream file unchanged (CI fails if they differ).
+- Person fields (Yondr staff: admins, "Added by") use the shared directory picker (overyondr-website-v1
+  docs/PLATFORM.md §8). Client name/email fields are customers, not staff: no picker.
 - Database: only additive changes (new tables, new nullable columns via `ADDED_COLUMNS` in `src/schema.js`). Then run
   `npm run schema` to regenerate `schema.sql` (a test fails if it's out of date).
 - Static files in `public/` are bundled into the Worker by `scripts/bundle.mjs` (wrangler runs it before dev/deploy).
