@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      # Pin third-party actions to a commit SHA if this repo ever handles secrets (Dependabot keeps them current).
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      # Actions are pinned to commit SHAs (version in the comment); Dependabot keeps them current.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: |
           curl -fsSL https://raw.githubusercontent.com/Overyondrdev/overyondr-website-v1/main/auth/src/session.js -o upstream.js
           cmp upstream.js src/yondr-session.js || {
