@@ -1,5 +1,10 @@
 # Yondr Christmas Cards: instructions for Claude
 
+**Start with the [overyondrdev.com Handbook](https://github.com/Overyondrdev/overyondr-website-v1/blob/main/docs/handbook/README.md)**:
+the single source of truth for the whole platform (what runs where, sign-in without Cloudflare seats, portals, people
+directory, operations, auto-fix, how we work, runbooks, decisions). If your change alters what it says, update it in
+the same work (a PR in overyondr-website-v1).
+
 cards.overyondrdev.com, one Cloudflare Worker (`yondr-christmas-cards`) with D1 `yondr-christmas-cards`.
 Staff add the clients who should get a Yondr Christmas card; the card team works at `/admin`. It's live and in use:
 avoid anything that would sign people out, lose data or change who can sign in, unless asked.
